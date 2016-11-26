@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -12,10 +8,12 @@ namespace app_core_service
 {
     public class Startup
     {
+        public IConfigurationRoot Configuration { get; }
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -28,10 +26,21 @@ namespace app_core_service
                 app.UseDeveloperExceptionPage();
             }
 
-            app.Run(async (context) =>
+            // app.Run(async (context) =>
+            // {
+            //     await context.Response.WriteAsync("Hello World!");
+            // });
+
+            app.UseStaticFiles();
+
+            // Add external authentication middleware below. To configure them please see https://go.microsoft.com/fwlink/?LinkID=532715
+            app.UseMvc(routes =>
             {
-                await context.Response.WriteAsync("Hello World!");
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Middleware}/{action=Index}");
             });
+
         }
     }
 }
