@@ -6,8 +6,7 @@
     <title>@ViewData["Title"] - MicroServiceApp</title>
 
     <environment names="Development">
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-        <link rel="stylesheet" href="~/css/micro-service-app.css" />
+        <link rel="stylesheet" href="~/css/main.css" />
     </environment>
     <environment names="Staging,Production">
         <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/css/bootstrap.min.css"
@@ -20,9 +19,34 @@
     <!-- Wrapper-->
     <!-- PageClass give you ability to specify custom style for specific view based on action -->
     <div id="wrapper">
+         <div id="right-sidebar" class="sidebar-open" style="left: 0; top: 0;">
+        <div class="sidebar-container">
+            <ul class="nav nav-tabs navs-3">
+                <li ng-class="{active: (Sidetab==1)}">
+                    <a ng-click="tab = 1" ng-init="Sidetab = 1"> Collections </a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane" ng-if="Sidetab==1" ng-class="{active: (Sidetab==1)}">
+                    <div class="sidebar-title">
+                        <div class="row">
+                            <div class="pull-right">
+                                <button data-ng-click="showPopup('add-module');" type="button" class="btn btn-outline btn-info"> + </button>
+                            </div>
+                            <div class="input-group col-xs-10">
+                                <input type="text" placeholder="Search issue by name..." class=" form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <apis-list></apis-list>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
         <!-- Page wraper -->
-        
-        <div id="page-wrapper row" class="gray-bg @ViewBag.SpecialClass" style=" margin-left: 240px;">
+        <div id="page-wrapper row" class="gray-bg @ViewBag.SpecialClass" style=" margin-left: 266px;">
             <!-- Main view  -->
             @RenderBody()
         </div>
