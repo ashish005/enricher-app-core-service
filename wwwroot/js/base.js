@@ -114,15 +114,14 @@
                 return {
                     restrict: 'AE',
                     replace: true,
-                    scope:false,
+                    scope:{},
                     transclude: true,
                     templateUrl: 'js/controls/apis-info.html',
                     link: function ($scope, $element, $attrs) {
-
                         $scope.apiInfo = apiReqModel.getInfoModel({});
                         $rootScope.$on('apiInfo', function(event, req) {
                             MiddleLayerService.getApisCollectionsById(req).then(function(resp){
-                                $scope.apiInfo = apiReqModel.getInfoModel(resp.data);
+                                $scope.apiInfo = apiReqModel.getInfoModel(resp.rows[0]);
                             }, function(error){
                                 console.log(JSON.stringify(error));
                             });
@@ -176,7 +175,6 @@
 
                         $element.on('click', '#saveApi', function(e) {
                             e.stopPropagation();
-                            debugger;
                             console.log(apiReqModel.get());
                             alert('hi');
                         });
@@ -263,7 +261,6 @@
         /*************** */
         function ngPluginController($scope, $rootScope){
             $rootScope.initApp = function(){
-                debugger;
                 $('#yourContainer').load('/Dashboard/AddURLTest');
             }
         }
@@ -359,7 +356,8 @@
                     return this;
                 };
                 info.getInfoModel = function (model) {
-                    return infoModel(model);
+                    var _data = new infoModel(model);
+                    return _data;
                 };
                 return info;
             };

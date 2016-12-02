@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Enricher.Models;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.NodeServices;
+using Newtonsoft.Json;
 
 namespace Enricher.Middleware
 {
@@ -26,102 +27,21 @@ namespace Enricher.Middleware
                     new ApiCollection(){
                         apisList =  new List<ApiInfo>(){
                                 new ApiInfo(){
-                                    name= "A",
+                                    id= 17,
+                                    name= "api1",
                                     method = "GET",
                                     description = "aasfdfsdsfs"
                                 },
                                 new ApiInfo(){
+                                    id= 18,
                                     name= "B",
-                                    method = "POST",
+                                    method = "PUT",
                                     description = "aasfdfsdsfs"
                                 },
                                 new ApiInfo(){
+                                    id= 19,
                                     name= "c",
-                                    method = "Delete",
-                                    description = "aasfdfsdsfs"
-                                },
-                            },
-                        name = "collection 1",
-                        id = 12312312
-                    },
-                    new ApiCollection(){
-                        apisList =  new List<ApiInfo>(){
-                                new ApiInfo(){
-                                    name= "A",
-                                    method = "GET",
-                                    description = "aasfdfsdsfs"
-                                },
-                                new ApiInfo(){
-                                    name= "B",
                                     method = "POST",
-                                    description = "aasfdfsdsfs"
-                                },
-                                new ApiInfo(){
-                                    name= "c",
-                                    method = "Delete",
-                                    description = "aasfdfsdsfs"
-                                },
-                            },
-                        name = "collection 1",
-                        id = 12312312
-                    },
-                    new ApiCollection(){
-                        apisList =  new List<ApiInfo>(){
-                                new ApiInfo(){
-                                    name= "A",
-                                    method = "GET",
-                                    description = "aasfdfsdsfs"
-                                },
-                                new ApiInfo(){
-                                    name= "B",
-                                    method = "POST",
-                                    description = "aasfdfsdsfs"
-                                },
-                                new ApiInfo(){
-                                    name= "c",
-                                    method = "Delete",
-                                    description = "aasfdfsdsfs"
-                                },
-                            },
-                        name = "collection 1",
-                        id = 12312312
-                    },
-                    new ApiCollection(){
-                        apisList =  new List<ApiInfo>(){
-                                new ApiInfo(){
-                                    name= "A",
-                                    method = "GET",
-                                    description = "aasfdfsdsfs"
-                                },
-                                new ApiInfo(){
-                                    name= "B",
-                                    method = "POST",
-                                    description = "aasfdfsdsfs"
-                                },
-                                new ApiInfo(){
-                                    name= "c",
-                                    method = "Delete",
-                                    description = "aasfdfsdsfs"
-                                },
-                            },
-                        name = "collection 1",
-                        id = 12312312
-                    },
-                    new ApiCollection(){
-                        apisList =  new List<ApiInfo>(){
-                                new ApiInfo(){
-                                    name= "A",
-                                    method = "GET",
-                                    description = "aasfdfsdsfs"
-                                },
-                                new ApiInfo(){
-                                    name= "B",
-                                    method = "POST",
-                                    description = "aasfdfsdsfs"
-                                },
-                                new ApiInfo(){
-                                    name= "c",
-                                    method = "Delete",
                                     description = "aasfdfsdsfs"
                                 },
                             },
@@ -133,21 +53,34 @@ namespace Enricher.Middleware
             return obj.apiColl;
         }
         [HttpGet("{id}", Name = "GetTodo")]
-        public async Task<IActionResult> MyAction([FromServices] INodeServices nodeServices)
+        public async Task<JsonResult> MyAction(string id, [FromServices] INodeServices nodeServices)
         {
-            var result = await nodeServices.InvokeAsync<object>("./greeter", 1, 2);
-            return Content(result.ToString(), "application/json");
-        }
+            var queryStrings = Request.Query;
+            string config = "pg://postgres:password@123@127.0.0.1:5432/postgres";
+            DBConfigModel model = new DBConfigModel() { 
+                type = "pg", 
+                config = config,
+                query = string.Format("SELECT * FROM public.apisrepository {0}", (string.IsNullOrEmpty(id))? string.Empty:"where id = " + id)
+            };
 
-        // [HttpGet("{id}", Name = "GetTodo")]
-        // public IEnumerable<object> GetById(string id)
-        // {
-        //    return this.MyAction();
-        // }
+            ResponseObj result = await nodeServices.InvokeAsync<ResponseObj>("./NodeApp/db-config-main", "GET", model);
+            return Json(result);
+        }
     }
 }
 namespace Enricher.Models
 {
+     public class ResponseObj  {
+        public object fields;
+         public object rows;
+
+     }
+     public class DBConfigModel  {
+         public string type;
+         public string config;
+         public string query;
+
+     }
     public class ApisCollections  
         {  
             public List<ApiCollection>  apiColl {   get;   set;  }
